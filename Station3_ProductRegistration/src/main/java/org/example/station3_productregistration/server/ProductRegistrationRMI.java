@@ -8,7 +8,7 @@ public interface ProductRegistrationRMI extends Remote {
 
     void registerProduct(int productId, String productType) throws RemoteException;
 
-    Products getProductById(int productId) throws RemoteException;
+    List<String> getProductById(int productId) throws RemoteException;
 
     List<ProductTrays> getAllProductTrays() throws RemoteException;
 

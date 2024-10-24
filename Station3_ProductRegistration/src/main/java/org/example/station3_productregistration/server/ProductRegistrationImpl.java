@@ -43,19 +43,24 @@ public class ProductRegistrationImpl extends UnicastRemoteObject implements Prod
     }
 
     @Override
-    public Products getProductById(int productId) throws RemoteException {
+    public List<String> getProductById(int productId) throws RemoteException {
         String query = "SELECT * FROM products WHERE product_id = ?";
+        List<String> productList =new ArrayList<>();
+
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, productId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new Products(rs.getString("product_type"), rs.getInt("product_id"));
+               int product_id = rs.getInt("product_id");
+               String product_type = rs.getString("product_type");
+               productList.add("Product id: " + product_id + " Product type: "+ product_type);
             } else {
                 throw new RemoteException("Product not found for ID: " + productId);
             }
         } catch (SQLException e) {
             throw new RemoteException("Error while fetching product details", e);
         }
+        return productList;
     }
 
 

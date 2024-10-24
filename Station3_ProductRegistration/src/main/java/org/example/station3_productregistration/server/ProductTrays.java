@@ -1,6 +1,8 @@
 package org.example.station3_productregistration.server;
 
-public class ProductTrays {
+import java.io.Serializable;
+
+public class ProductTrays implements Serializable {
     public ProductTrays(int product_id, int tray_id) {
         this.product_id = product_id;
         this.tray_id = tray_id;
@@ -24,4 +26,9 @@ public class ProductTrays {
 
     private int product_id;
     private int tray_id;
+
+    @Override
+    public String toString() {
+        return "productId = " + product_id + ", trayId = " + tray_id + " ";
+    }
 }

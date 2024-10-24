@@ -57,7 +57,7 @@ public class ProductRegistrationRMIClient {
                         scanner.nextLine();  // Consume the newline
 
                         // Fetch product details using the appropriate service method
-                        Products productDetails = service.getProductById(detailsProductId);
+                        List<String> productDetails = service.getProductById(detailsProductId);
                         System.out.println("Product Details for ID " + detailsProductId + ": " + productDetails);
                         break;
 

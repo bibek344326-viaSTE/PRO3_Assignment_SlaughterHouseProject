@@ -17,7 +17,7 @@ public class CuttingAndPartRegistrationRMIServer extends UnicastRemoteObject imp
         super();
         try {
             // Connect to PostgreSQL database
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhousedb", "postgres", "rachu1997");
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhousedb", "postgres", "Sneha123");
             System.out.println("Connected to the PostgreSQL database.");
         } catch (SQLException e) {
             e.printStackTrace();

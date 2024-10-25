@@ -1,4 +1,4 @@
-package Server;
+package org.example.station2_cuttingandpartsregistration.Server;
 
 public class AnimalPart {
                   private int partId;

@@ -1,4 +1,4 @@
-package Server;
+package org.example.station2_cuttingandpartsregistration.Server;
 
 import java.util.ArrayList;
 import java.util.List;

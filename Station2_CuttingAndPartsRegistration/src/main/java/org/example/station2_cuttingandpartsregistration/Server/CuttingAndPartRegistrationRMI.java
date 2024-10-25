@@ -1,4 +1,4 @@
-package Server;
+package org.example.station2_cuttingandpartsregistration.Server;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

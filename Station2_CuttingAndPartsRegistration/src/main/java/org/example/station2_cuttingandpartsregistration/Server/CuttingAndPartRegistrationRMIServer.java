@@ -1,4 +1,4 @@
-package Server;
+package org.example.station2_cuttingandpartsregistration.Server;
 
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -17,7 +17,7 @@ public class CuttingAndPartRegistrationRMIServer extends UnicastRemoteObject imp
         super();
         try {
             // Connect to PostgreSQL database
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhousedb", "postgres", "P@ssw0rd");
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhousedb", "postgres", "rachu1997");
             System.out.println("Connected to the PostgreSQL database.");
         } catch (SQLException e) {
             e.printStackTrace();

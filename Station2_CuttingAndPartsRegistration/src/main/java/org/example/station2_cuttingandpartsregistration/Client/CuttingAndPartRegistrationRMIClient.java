@@ -1,6 +1,6 @@
-package Client;
+package org.example.station2_cuttingandpartsregistration.Client;
 
-import Server.CuttingAndPartRegistrationRMI;
+import org.example.station2_cuttingandpartsregistration.Server.CuttingAndPartRegistrationRMI;
 
 import java.rmi.Naming;
 import java.util.List;

@@ -51,9 +51,9 @@ public class ProductRegistrationImpl extends UnicastRemoteObject implements Prod
             stmt.setInt(1, productId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-               int product_id = rs.getInt("product_id");
-               String product_type = rs.getString("product_type");
-               productList.add("Product id: " + product_id + " Product type: "+ product_type);
+                int product_id = rs.getInt("product_id");
+                String product_type = rs.getString("product_type");
+                productList.add("Product id: " + product_id + " Product type: "+ product_type);
             } else {
                 throw new RemoteException("Product not found for ID: " + productId);
             }
@@ -170,10 +170,3 @@ public class ProductRegistrationImpl extends UnicastRemoteObject implements Prod
         }
     }
 }
-
-
-
-
-
-
-

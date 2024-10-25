@@ -47,4 +47,3 @@ public class DistributionOrders {
         this.recallStatus = recallStatus;
     }
 }
-

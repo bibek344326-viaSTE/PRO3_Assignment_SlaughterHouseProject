@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package org.example.stations;
+
+service StationService {
+  rpc RegisterAnimalPart (RegisterAnimalPartRequest) returns (RegisterAnimalPartResponse);
+}
+
+message RegisterAnimalPartRequest {
+  int32 animalId = 1;
+  string partType = 2;
+  double weight = 3;
+}
+
+message RegisterAnimalPartResponse {
+  string status = 1;
+}

@@ -17,7 +17,7 @@ public class AnimalRegistrationRMIServer extends UnicastRemoteObject implements 
             Class.forName("org.postgresql.Driver");  // Load PostgreSQL driver
             connection = DriverManager.getConnection(
                     "jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhousedb",
-                    "postgres", "rachu1997"
+                    "postgres", "Sneha123"
             );
             System.out.println("Connected to the PostgreSQL database.");
         } catch (ClassNotFoundException e) {

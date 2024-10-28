@@ -1,22 +1,26 @@
 # Slaughterhouse Management System - gRPC Overview
 
-This system leverages **gRPC** for efficient, high-performance communication between three main stations in the animal processing workflow. gRPC allows:
-- **High-speed Communication**: Its lightweight protocol supports rapid data exchange between distributed stations.
-- **Data Consistency**: Strictly defined data types enforce data integrity across all stations.
-- **Scalability**: gRPC makes it simple to extend the system with additional stations or functionality.
+This system relies on **gRPC** for efficient, high-performance communication across the three main stations in the animal processing workflow. By leveraging gRPC, we achieve:
 
-> **Note:** The gRPC integration is actively under development and is being tested on a separate branch, **`grpc-connection`**.
+- **Fast, Scalable Communication**: gRPC’s lightweight and high-performance protocol supports real-time data exchange between distributed stations.
+- **Reliable Data Integrity**: With strict type definitions, gRPC ensures that all data transferred remains consistent across each station.
+- **Ease of Integration**: gRPC makes it easy to add additional stations or extend functionality with minimal impact on the existing system.
+
+> **Note:** The gRPC integration is actively under development and is being tested on a separate branch called **`grpc-connection`**.
 
 ## Implementation Summary
 
-Each station is structured as an independent service with specific tasks in the workflow:
-- **Station 1: Animal Registration**
-- **Station 2: Cutting and Parts Registration**
-- **Station 3: Product Registration**
+Each station operates as an independent service with a well-defined API to perform specific tasks in the processing workflow. gRPC methods at each station are responsible for handling unique aspects of the workflow, such as registering animals, managing parts, and recording products and distribution details.
 
-The **`.proto` files** serve as the blueprint for each service’s API, defining the methods and data structures used in inter-service communication. This includes:
-1. **Service Definition**: For instance, **Station 1** provides `registerAnimal` and `listRegisteredAnimals` methods; **Station 2** handles `addAnimalPart` and `getAnimalParts`; **Station 3** includes `registerProduct` and `createOrder`.
-2. **Automatic Stub Generation**: The `.proto` files generate Java stubs, creating a consistent contract between services and enforcing strict data type requirements.
-3. **Seamless Communication**: Each station acts as a gRPC server and client, allowing efficient data flow across the system.
+The **`.proto`** files define each service’s API and message structures, making this the backbone of the gRPC implementation. Key points of the `.proto` file process include:
 
-With these features, gRPC enables scalable, reliable communication and smooth inter-service operations. The ongoing work on the `grpc-connection` branch focuses on refining these connections and ensuring optimal performance across all stations.
+1. **Service Definition**: Each station has a dedicated `.proto` file that describes its gRPC services and their available methods. For example:
+   - **Station 1** defines methods like `registerAnimal` and `listRegisteredAnimals`.
+   - **Station 2** includes `addAnimalPart` and `getAnimalParts`.
+   - **Station 3** includes `registerProduct` and `createOrder`.
+
+2. **Automatic Code Generation**: The `.proto` files generate Java stubs, which are then implemented to handle gRPC calls. These stubs create a contract between services, ensuring consistent data types and function signatures across all stations.
+
+3. **Inter-service Communication**: The generated code allows each station to act as both a gRPC server and client, facilitating seamless data flow and orchestration across the system.
+
+This structure, anchored by `.proto` files, enables fast data exchange and flexible service integration, forming a resilient, extensible, and performant slaughterhouse management system.

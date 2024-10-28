@@ -2,43 +2,37 @@ package org.example.station1_animalregistration.grpc;
 
 import com.animalregistration.*;
 import io.grpc.stub.StreamObserver;
+import org.example.station1_animalregistration.model.Animal;
+import org.example.station1_animalregistration.repository.AnimalRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
-import java.sql.*;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class AnimalRegistrationServiceImpl extends AnimalRegistrationServiceGrpc.AnimalRegistrationServiceImplBase {
-    private Connection connection;
 
-    public AnimalRegistrationServiceImpl() throws SQLException, ClassNotFoundException {
-        // Connect to the database
-        Class.forName("org.postgresql.Driver");
-        connection = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhousedb",
-                "postgres", "Sneha123"
-        );
-    }
+    @Autowired
+    private AnimalRepository animalRepository;
+
     @Override
     public void registerAnimal(AnimalRequest request, StreamObserver<AnimalResponse> responseObserver) {
         try {
             String registrationNumber = getNextRegistrationNumber();
-            String query = "INSERT INTO animals (registration_number, weight, registration_date) VALUES (?, ?, ?)";
-            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-                pstmt.setString(1, registrationNumber);
-                pstmt.setDouble(2, request.getWeight());
-                pstmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-                pstmt.executeUpdate();
-            }
+            Animal animal = new Animal();
+            animal.setRegistrationNumber(registrationNumber);
+            animal.setWeight(request.getWeight());
+            animal.setRegistrationDate(new Date());
+
+            animalRepository.save(animal);
+
             AnimalResponse response = AnimalResponse.newBuilder()
                     .setMessage(registrationNumber)
                     .build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             responseObserver.onError(e);
         }
     }
@@ -46,32 +40,28 @@ public class AnimalRegistrationServiceImpl extends AnimalRegistrationServiceGrpc
     @Override
     public void listRegisteredAnimals(EmptyRequest request, StreamObserver<AnimalListResponse> responseObserver) {
         AnimalListResponse.Builder responseBuilder = AnimalListResponse.newBuilder();
-        try (Statement stmt = connection.createStatement()) {
-            ResultSet rs = stmt.executeQuery("SELECT animal_id, registration_number, weight, registration_date FROM animals");
-            while (rs.next()) {
-                responseBuilder.addAnimals(Animal.newBuilder()
-                        .setAnimalId(rs.getInt("animal_id"))
-                        .setRegistrationNumber(rs.getString("registration_number"))
-                        .setWeight(rs.getDouble("weight"))
-                        .setRegistrationDate(rs.getTimestamp("registration_date").toString())
-                        .build());
-            }
-            responseObserver.onNext(responseBuilder.build());
-            responseObserver.onCompleted();
-        } catch (SQLException e) {
-            responseObserver.onError(e);
+        List<Animal> animals = animalRepository.findAll();
+
+        for (Animal animal : animals) {
+            responseBuilder.addAnimals(com.animalregistration.Animal.newBuilder()
+                    .setAnimalId(animal.getAnimalId())
+                    .setRegistrationNumber(animal.getRegistrationNumber())
+                    .setWeight(animal.getWeight())
+                    .setRegistrationDate(animal.getRegistrationDate().toString())
+                    .build());
         }
+
+        responseObserver.onNext(responseBuilder.build());
+        responseObserver.onCompleted();
     }
-    private String getNextRegistrationNumber() throws SQLException {
-        String query = "SELECT registration_number FROM animals ORDER BY animal_id DESC LIMIT 1";
-        try (Statement stmt = connection.createStatement()) {
-            ResultSet rs = stmt.executeQuery(query);
-            if (rs.next()) {
-                String lastRegNumber = rs.getString("registration_number");
-                return incrementRegistrationNumber(lastRegNumber);
-            } else {
-                return "REG00001"; // First registration number
-            }
+
+    private String getNextRegistrationNumber() {
+        Animal lastAnimal = animalRepository.findTopByOrderByAnimalIdDesc();
+        if (lastAnimal != null) {
+            String lastRegNumber = lastAnimal.getRegistrationNumber();
+            return incrementRegistrationNumber(lastRegNumber);
+        } else {
+            return "REG00001"; // First registration number
         }
     }
 

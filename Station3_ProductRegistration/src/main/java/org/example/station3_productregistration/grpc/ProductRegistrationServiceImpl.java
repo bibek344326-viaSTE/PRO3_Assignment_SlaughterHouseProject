@@ -1,7 +1,6 @@
-package org.example.station3_productregistration.server;
+package org.example.station3_productregistration.grpc;
 
 import io.grpc.stub.StreamObserver;
-import org.example.station3_productregistration.grpc.*;
 
 import java.sql.*;
 import java.util.ArrayList;

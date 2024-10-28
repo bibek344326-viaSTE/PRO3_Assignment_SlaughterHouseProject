@@ -1,9 +1,8 @@
-package org.example.station3_productregistration.client;
+package org.example.station3_productregistration.grpc;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
-import org.example.station3_productregistration.grpc.*;
 
 import java.util.List;
 import java.util.Scanner;

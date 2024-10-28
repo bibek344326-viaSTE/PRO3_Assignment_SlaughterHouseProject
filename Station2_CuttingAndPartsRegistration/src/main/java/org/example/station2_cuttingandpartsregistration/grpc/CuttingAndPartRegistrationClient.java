@@ -1,11 +1,10 @@
-package org.example.station2_cuttingandpartsregistration.Client;
+package org.example.station2_cuttingandpartsregistration.grpc;
 
 import com.cutting_partsRegistration.*;
 import com.cutting_partsRegistration.CuttingAndPartRegistrationServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class CuttingAndPartRegistrationClient {

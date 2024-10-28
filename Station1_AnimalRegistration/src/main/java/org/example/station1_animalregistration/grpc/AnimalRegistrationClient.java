@@ -10,7 +10,7 @@ import io.grpc.ManagedChannelBuilder;
 
 import java.util.Scanner;
 
-public class AnimalClient {
+public class AnimalRegistrationClient {
     public static void main(String[] args) {
         // Create a channel to connect to the server
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)

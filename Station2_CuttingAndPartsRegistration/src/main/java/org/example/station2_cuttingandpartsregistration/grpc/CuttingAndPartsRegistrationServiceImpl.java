@@ -1,4 +1,4 @@
-package org.example.station2_cuttingandpartsregistration.Server;
+package org.example.station2_cuttingandpartsregistration.grpc;
 
 import com.cutting_partsRegistration.*;
 import com.cutting_partsRegistration.CuttingAndPartRegistrationServiceGrpc;

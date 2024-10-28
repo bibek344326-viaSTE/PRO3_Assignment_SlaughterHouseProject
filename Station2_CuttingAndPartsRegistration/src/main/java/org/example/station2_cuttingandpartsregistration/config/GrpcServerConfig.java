@@ -3,7 +3,7 @@ package org.example.station2_cuttingandpartsregistration.config;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import org.example.station2_cuttingandpartsregistration.Server.CuttingAndPartsRegistrationServiceImpl;
+import org.example.station2_cuttingandpartsregistration.grpc.CuttingAndPartsRegistrationServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

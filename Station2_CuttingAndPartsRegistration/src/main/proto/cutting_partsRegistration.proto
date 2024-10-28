@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package com.cutting_partsRegistration;
+option java_multiple_files = true;
+
+service CuttingAndPartRegistrationService {
+  rpc AddAnimalPart(AddAnimalPartRequest) returns (AddAnimalPartResponse);
+  rpc GetAnimalParts(GetAnimalPartsRequest) returns (GetAnimalPartsResponse);
+  rpc AddTray(AddTrayRequest) returns (AddTrayResponse);
+  rpc AddPartToTray(AddPartToTrayRequest) returns (AddPartToTrayResponse);
+  rpc GetTrays(GetTraysRequest) returns (GetTraysResponse);
+  rpc GetPartsInTray(GetPartsInTrayRequest) returns (GetPartsInTrayResponse);
+}
+
+message AddAnimalPartRequest {
+  int32 animalId = 1;
+  string partType = 2;
+  double weight = 3;
+}
+
+message AddAnimalPartResponse {
+  bool success = 1;
+}
+
+message GetAnimalPartsRequest {
+  int32 animalId = 1;
+}
+
+message GetAnimalPartsResponse {
+  repeated Part parts = 1;
+}
+
+message AddTrayRequest {
+  string partType = 1;
+  double maxWeightCapacity = 2;
+}
+
+message AddTrayResponse {
+  bool success = 1;
+}
+
+message AddPartToTrayRequest {
+  int32 trayId = 1;
+  int32 partId = 2;
+}
+
+message AddPartToTrayResponse {
+  bool success = 1;
+}
+
+message GetTraysRequest {}
+
+message GetTraysResponse {
+  repeated Tray trays = 1;
+}
+
+message GetPartsInTrayRequest {
+  int32 trayId = 1;
+}
+
+message GetPartsInTrayResponse {
+  repeated Part parts = 1;
+}
+
+message Part {
+  int32 partId = 1;
+  string partType = 2;
+  double weight = 3;
+}
+
+message Tray {
+  int32 trayId = 1;
+  string partType = 2;
+  double maxWeightCapacity = 3;
+}

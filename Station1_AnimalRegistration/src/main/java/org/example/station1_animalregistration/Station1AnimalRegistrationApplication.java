@@ -2,6 +2,8 @@ package org.example.station1_animalregistration;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
 @SpringBootApplication
 public class Station1AnimalRegistrationApplication {
@@ -10,4 +12,15 @@ public class Station1AnimalRegistrationApplication {
         SpringApplication.run(Station1AnimalRegistrationApplication.class, args);
     }
 
+    @Component
+    public class AppStartupRunner implements CommandLineRunner {
+
+        @Override
+        public void run(String... args) throws Exception {
+            // Keep the application running
+            synchronized (this) {
+                wait();
+            }
+        }
+    }
 }

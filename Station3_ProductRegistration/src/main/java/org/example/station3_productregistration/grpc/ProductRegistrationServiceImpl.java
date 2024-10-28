@@ -2,183 +2,166 @@ package org.example.station3_productregistration.grpc;
 
 import io.grpc.stub.StreamObserver;
 
-import java.sql.*;
-import java.util.ArrayList;
+import org.example.station3_productregistration.model.OrderProduct;
+import org.example.station3_productregistration.model.Product;
+import org.example.station3_productregistration.model.ProductTray;
+import org.example.station3_productregistration.model.DistributionOrder;
+
+import org.example.station3_productregistration.repository.ProductRepository;
+import org.example.station3_productregistration.repository.ProductTrayRepository;
+import org.example.station3_productregistration.repository.OrderProductRepository;
+import org.example.station3_productregistration.repository.DistributionOrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
+@Service
 public class ProductRegistrationServiceImpl extends ProductRegistrationServiceGrpc.ProductRegistrationServiceImplBase {
-    private Connection connection;
 
-    public ProductRegistrationServiceImpl() {
-        try {
-            // Establish a connection to the PostgreSQL database
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhousedb", "postgres", "Sneha123");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }    }
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private ProductTrayRepository productTrayRepository;
+
+    @Autowired
+    private OrderProductRepository orderProductRepository;
+
+    @Autowired
+    private DistributionOrderRepository distributionOrderRepository;
 
     @Override
     public void registerProduct(RegisterProductRequest request, StreamObserver<com.google.protobuf.Empty> responseObserver) {
-        String query = "INSERT INTO products (product_id, product_type) VALUES (?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, request.getProductId());
-            stmt.setString(2, request.getProductType());
-            stmt.executeUpdate();
-            System.out.println("Product registered successfully.");
-            responseObserver.onNext(com.google.protobuf.Empty.getDefaultInstance());
-            responseObserver.onCompleted();
-        } catch (SQLException e) {
-            responseObserver.onError(new RuntimeException("Error while registering product: " + e.getMessage()));
-        }
+        Product product = new Product();
+        product.setProductId(request.getProductId());
+        product.setProductType(request.getProductType());
+
+        productRepository.save(product);
+        responseObserver.onNext(com.google.protobuf.Empty.getDefaultInstance());
+        responseObserver.onCompleted();
     }
 
     @Override
     public void getProductById(GetProductByIdRequest request, StreamObserver<GetProductByIdResponse> responseObserver) {
-        String query = "SELECT * FROM products WHERE product_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, request.getProductId());
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                Product product = Product.newBuilder()
-                        .setProductId(rs.getInt("product_id"))
-                        .setProductType(rs.getString("product_type"))
-                        .build();
-                GetProductByIdResponse response = GetProductByIdResponse.newBuilder()
-                        .setProduct(product)
-                        .build();
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
-            } else {
-                responseObserver.onError(new RuntimeException("Product not found for ID: " + request.getProductId()));
-            }
-        } catch (SQLException e) {
-            responseObserver.onError(new RuntimeException("Error while fetching product details: " + e.getMessage()));
+        org.example.station3_productregistration.model.Product product = productRepository.findById(request.getProductId()).orElse(null);
+        if (product != null) {
+            GetProductByIdResponse response = GetProductByIdResponse.newBuilder()
+                    .setProduct(toGrpcProduct(product)) // Use the conversion method here
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } else {
+            responseObserver.onError(new RuntimeException("Product not found for ID: " + request.getProductId()));
         }
     }
+
+    private org.example.station3_productregistration.grpc.Product toGrpcProduct(Product product) {
+        return org.example.station3_productregistration.grpc.Product.newBuilder()
+                .setProductId(product.getProductId())
+                .setProductType(product.getProductType())
+                .build();
+
+    }
+
 
     @Override
     public void getAllProductTrays(com.google.protobuf.Empty request, StreamObserver<GetAllProductTraysResponse> responseObserver) {
-        String query = "SELECT * FROM product_trays";
-        List<ProductTrays> trays = new ArrayList<>();
-        try (PreparedStatement stmt = connection.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                // Ensure this references the correct Protobuf generated class
-                ProductTrays tray = ProductTrays.newBuilder()
-                        .setProductId(rs.getInt("product_id"))
-                        .setTrayId(rs.getInt("tray_id"))
-                        .build();
-                trays.add(tray);
-            }
-            // Ensure the response is built correctly
-            GetAllProductTraysResponse response = GetAllProductTraysResponse.newBuilder()
-                    .addAllTrays(trays)
-                    .build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-        } catch (SQLException e) {
-            responseObserver.onError(new RuntimeException("Error while fetching product trays: " + e.getMessage()));
-        }
-    }
+        List<ProductTray> trays = productTrayRepository.findAll();
+        List<ProductTrays> productTraysList = new ArrayList<>();
 
+        for (ProductTray tray : trays) {
+            productTraysList.add(ProductTrays.newBuilder()
+                    .setProductId(tray.getProduct().getProductId())
+                    .setTrayId(tray.getTray().getTrayId()) // Make sure to have trayId getter
+                    .build());
+        }
+
+        GetAllProductTraysResponse response = GetAllProductTraysResponse.newBuilder()
+                .addAllTrays(productTraysList)
+                .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
 
     @Override
     public void getAllProductTypes(com.google.protobuf.Empty request, StreamObserver<GetAllProductTypesResponse> responseObserver) {
-        String query = "SELECT DISTINCT product_type FROM products";
-        List<String> productTypes = new ArrayList<>();
-        try (PreparedStatement stmt = connection.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                productTypes.add(rs.getString("product_type"));
-            }
-            GetAllProductTypesResponse response = GetAllProductTypesResponse.newBuilder()
-                    .addAllProductTypes(productTypes)
-                    .build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-        } catch (SQLException e) {
-            responseObserver.onError(new RuntimeException("Error while fetching product types: " + e.getMessage()));
-        }
+        List<String> productTypes = productRepository.findAll().stream()
+                .map(Product::getProductType)
+                .distinct()
+                .collect(Collectors.toList());
+
+        GetAllProductTypesResponse response = GetAllProductTypesResponse.newBuilder()
+                .addAllProductTypes(productTypes)
+                .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
     @Override
     public void createOrder(CreateOrderRequest request, StreamObserver<com.google.protobuf.Empty> responseObserver) {
-        String query = "INSERT INTO order_products (order_id, product_id) VALUES (?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, request.getOrderId());
-            stmt.setInt(2, request.getProductId());
-            stmt.executeUpdate();
-            System.out.println("Order created successfully.");
-            responseObserver.onNext(com.google.protobuf.Empty.getDefaultInstance());
-            responseObserver.onCompleted();
-        } catch (SQLException e) {
-            responseObserver.onError(new RuntimeException("Error while creating order: " + e.getMessage()));
-        }
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setOrderId(request.getOrderId());
+        orderProduct.setProductId(request.getProductId());
+
+        orderProductRepository.save(orderProduct);
+        responseObserver.onNext(com.google.protobuf.Empty.getDefaultInstance());
+        responseObserver.onCompleted();
     }
 
     @Override
     public void getOrderById(GetOrderByIdRequest request, StreamObserver<GetOrderByIdResponse> responseObserver) {
-        String query = "SELECT * FROM order_products WHERE order_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, request.getOrderId());
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                OrderProducts orderProducts = OrderProducts.newBuilder()
-                        .setOrderId(rs.getInt("order_id"))
-                        .setProductId(rs.getInt("product_id"))
-                        .build();
-                GetOrderByIdResponse response = GetOrderByIdResponse.newBuilder()
-                        .setOrderProducts(orderProducts)
-                        .build();
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
-            } else {
-                responseObserver.onError(new RuntimeException("Order not found for ID: " + request.getOrderId()));
-            }
-        } catch (SQLException e) {
-            responseObserver.onError(new RuntimeException("Error while fetching order details: " + e.getMessage()));
+        OrderProduct orderProduct = orderProductRepository.findById(request.getOrderId()).orElse(null);
+        if (orderProduct != null) {
+            OrderProducts orderProducts = OrderProducts.newBuilder()
+                    .setOrderId(orderProduct.getOrderId())
+                    .setProductId(orderProduct.getProductId())
+                    .build();
+            GetOrderByIdResponse response = GetOrderByIdResponse.newBuilder()
+                    .setOrderProducts(orderProducts)
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } else {
+            responseObserver.onError(new RuntimeException("Order not found for ID: " + request.getOrderId()));
         }
     }
 
     @Override
     public void createDistributionOrder(CreateDistributionOrderRequest request, StreamObserver<com.google.protobuf.Empty> responseObserver) {
-        String query = "INSERT INTO distribution_orders (order_id, customer_details, shipping_date) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, request.getOrderId());
-            stmt.setString(2, request.getCustomerDetails());
-            stmt.setString(3, request.getShippingDate());
-            stmt.executeUpdate();
-            System.out.println("Distribution order created successfully.");
-            responseObserver.onNext(com.google.protobuf.Empty.getDefaultInstance());
-            responseObserver.onCompleted();
-        } catch (SQLException e) {
-            responseObserver.onError(new RuntimeException("Error while creating distribution order: " + e.getMessage()));
-        }
+        DistributionOrder distributionOrder = new DistributionOrder();
+        distributionOrder.setOrderId(request.getOrderId());
+        distributionOrder.setCustomerDetails(request.getCustomerDetails());
+        distributionOrder.setShippingDate(request.getShippingDate());
+
+        distributionOrderRepository.save(distributionOrder);
+        responseObserver.onNext(com.google.protobuf.Empty.getDefaultInstance());
+        responseObserver.onCompleted();
     }
 
     @Override
     public void getDistributionOrderById(GetDistributionOrderByIdRequest request, StreamObserver<GetDistributionOrderByIdResponse> responseObserver) {
-        String query = "SELECT * FROM distribution_orders WHERE order_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, request.getOrderId());
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                DistributionOrder distributionOrder = DistributionOrder.newBuilder()
-                        .setOrderId(rs.getInt("order_id"))
-                        .setCustomerDetails(rs.getString("customer_details"))
-                        .setShippingDate(rs.getString("shipping_date")) // Assuming shipping_date is a string
-                        .setRecallStatus(rs.getBoolean("recall_status"))
-                        .build();
-                GetDistributionOrderByIdResponse response = GetDistributionOrderByIdResponse.newBuilder()
-                        .setDistributionOrder(distributionOrder)
-                        .build();
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
-            } else {
-                responseObserver.onError(new RuntimeException("Distribution order not found for ID: " + request.getOrderId()));
-            }
-        } catch (SQLException e) {
-            responseObserver.onError(new RuntimeException("Error while fetching distribution order details: " + e.getMessage()));
+        org.example.station3_productregistration.model.DistributionOrder distributionOrder = distributionOrderRepository.findById(request.getOrderId()).orElse(null);
+        if (distributionOrder != null) {
+            GetDistributionOrderByIdResponse response = GetDistributionOrderByIdResponse.newBuilder()
+                    .setDistributionOrder(toGrpcDistributionOrder(distributionOrder)) // Use the conversion method here
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } else {
+            responseObserver.onError(new RuntimeException("Distribution order not found for ID: " + request.getOrderId()));
         }
     }
+
+    private org.example.station3_productregistration.grpc.DistributionOrder toGrpcDistributionOrder(DistributionOrder distributionOrder) {
+        return org.example.station3_productregistration.grpc.DistributionOrder.newBuilder()
+                .setOrderId(distributionOrder.getOrderId())
+                .setCustomerDetails(distributionOrder.getCustomerDetails())
+                .setShippingDate(distributionOrder.getShippingDate())
+                .build();
+
+    }
+
 }

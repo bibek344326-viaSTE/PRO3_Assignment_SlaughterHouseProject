@@ -12,18 +12,53 @@ Each station operates as an independent service with a well-defined API to perfo
 
 The **`.proto`** files define each service’s API and message structures, making this the backbone of the gRPC implementation. Key points of the `.proto` file process include:
 
-1. **Service Definition**: Each station has a dedicated `.proto` file that describes its gRPC services and their available methods. For example:
-   - **Station 1** defines methods like `registerAnimal` and `listRegisteredAnimals`.
-   - **Station 2** includes `addAnimalPart` and `getAnimalParts`.
-   - **Station 3** includes `registerProduct` and `createOrder`.
+### Service Definition
 
-2. **Automatic Code Generation**: The `.proto` files generate Java stubs, which are then implemented to handle gRPC calls. These stubs create a contract between services, ensuring consistent data types and function signatures across all stations.
+Each station has a dedicated `.proto` file that describes its gRPC services and their available methods. For example:
 
-3. **Inter-service Communication**: The generated code allows each station to act as both a gRPC server and client, facilitating seamless data flow and orchestration across the system.
+- **Station 1** defines methods like `registerAnimal` and `listRegisteredAnimals`.
+- **Station 2** includes `addAnimalPart` and `getAnimalParts`.
+- **Station 3** includes `registerProduct` and `createOrder`.
 
-4. **Hibernate Integration**: Each station employs **Hibernate** as the Object-Relational Mapping (ORM) framework to manage data persistence. This integration enables efficient data access and manipulation, leveraging Hibernate's capabilities to map Java objects to database tables, ensuring data consistency and integrity throughout the workflow.
+### Automatic Code Generation
 
-5. **Maven Compilation**: To compile the project and ensure all dependencies are correctly set up, run Maven compile commands in each module's directory. Use the following command in your terminal:
+The `.proto` files generate Java stubs, which are then implemented to handle gRPC calls. These stubs create a contract between services, ensuring consistent data types and function signatures across all stations.
+
+### Inter-service Communication
+
+The generated code allows each station to act as both a gRPC server and client, facilitating seamless data flow and orchestration across the system.
+
+### Hibernate Integration
+
+Each station employs **Hibernate** as the Object-Relational Mapping (ORM) framework to manage data persistence. This integration enables efficient data access and manipulation, leveraging Hibernate's capabilities to map Java objects to database tables, ensuring data consistency and integrity throughout the workflow.
+
+## Setup Instructions
+
+### Database Setup
+
+1. **Configure the Database**: Ensure you have a database setup with the necessary tables and relationships specific to each module (Station 1, 2, and 3). Each module relies on distinct tables, so you’ll need to configure the schema according to the module requirements.
+2. **Hibernate Configuration**: Each module is set up with Hibernate for ORM. Ensure your `application.properties` or `application.yml` files contain the correct database credentials.
+
+### Compiling and Running the Application
+
+1. **Clone and Fetch Dependencies**: After cloning the repository and fetching dependencies, navigate to each module directory and run the Maven compile command to generate necessary files.
 
    ```bash
    mvn clean compile
+   
+### Handle Generated Sources
+
+After running `mvn compile`, you will find a `target` folder inside each module directory. Open the `target/generated-sources` directory, locate the `protobuf` folder, and mark it as a *Generated Source Root*. This allows IntelliJ (or your IDE) to recognize these files and remove any unresolved errors.
+
+### Run the Application
+
+1. **Start the gRPC server** in each module by running the main application class.
+2. You can **test the client application** by running the provided gRPC client files within each module.
+
+### Client Testing
+
+After starting each station’s server, run the gRPC client within each station module to test the methods:
+
+- **Station 1**: Test animal registration methods.
+- **Station 2**: Verify part management.
+- **Station 3**: Check product registration and distribution order methods.

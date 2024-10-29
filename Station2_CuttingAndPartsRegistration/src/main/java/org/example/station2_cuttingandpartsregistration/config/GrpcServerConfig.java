@@ -1,6 +1,5 @@
 package org.example.station2_cuttingandpartsregistration.config;
 
-
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.example.station2_cuttingandpartsregistration.grpc.CuttingAndPartsRegistrationServiceImpl;
@@ -17,11 +16,12 @@ public class GrpcServerConfig {
 
     private Server server;
 
+    // Inject the CuttingAndPartsRegistrationServiceImpl as a Spring-managed bean
     @Bean
-    public Server grpcServer() throws IOException, SQLException, ClassNotFoundException {
+    public Server grpcServer(CuttingAndPartsRegistrationServiceImpl cuttingAndPartsRegistrationService) throws IOException, SQLException, ClassNotFoundException {
         int port = 9091; // Define your port
         server = ServerBuilder.forPort(port)
-                .addService(new CuttingAndPartsRegistrationServiceImpl()) // Register your service
+                .addService(cuttingAndPartsRegistrationService) // Use injected service
                 .build()
                 .start();
 

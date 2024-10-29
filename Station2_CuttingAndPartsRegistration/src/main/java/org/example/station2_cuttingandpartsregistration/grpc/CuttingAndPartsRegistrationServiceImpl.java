@@ -18,14 +18,18 @@ import java.util.List;
 @Service
 public class CuttingAndPartsRegistrationServiceImpl extends CuttingAndPartRegistrationServiceGrpc.CuttingAndPartRegistrationServiceImplBase {
 
-    @Autowired
-    private AnimalPartRepository animalPartRepository;
+    private final AnimalPartRepository animalPartRepository;
+
+    private final TrayRepository trayRepository;
+
+    private final TrayPartRepository trayPartRepository;
 
     @Autowired
-    private TrayRepository trayRepository;
-
-    @Autowired
-    private TrayPartRepository trayPartRepository; // Include this if you're using TrayPart
+    public CuttingAndPartsRegistrationServiceImpl(AnimalPartRepository animalPartRepository, TrayRepository trayRepository, TrayPartRepository trayPartRepository) {
+        this.animalPartRepository = animalPartRepository;
+        this.trayRepository = trayRepository;
+        this.trayPartRepository = trayPartRepository;
+    }
 
     @Override
     public void addAnimalPart(AddAnimalPartRequest request, StreamObserver<AddAnimalPartResponse> responseObserver) {

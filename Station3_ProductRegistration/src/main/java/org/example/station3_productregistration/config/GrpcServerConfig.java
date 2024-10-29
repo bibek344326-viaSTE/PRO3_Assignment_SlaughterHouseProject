@@ -4,6 +4,7 @@ package org.example.station3_productregistration.config;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import org.example.station2_cuttingandpartsregistration.grpc.CuttingAndPartsRegistrationServiceImpl;
 import org.example.station3_productregistration.grpc.ProductRegistrationServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +20,10 @@ public class GrpcServerConfig {
     private Server server;
 
     @Bean
-    public Server grpcServer() throws IOException, SQLException, ClassNotFoundException {
+    public Server grpcServer(ProductRegistrationServiceImpl productRegistrationService) throws IOException, SQLException, ClassNotFoundException {
         int port = 50051; // Define your port
         server = ServerBuilder.forPort(port)
-                .addService(new ProductRegistrationServiceImpl()) // Register your service
+                .addService(productRegistrationService) // Register your service
                 .build()
                 .start();
 

@@ -2,6 +2,9 @@ package org.example.station3_productregistration.grpc;
 
 import io.grpc.stub.StreamObserver;
 
+import org.example.station2_cuttingandpartsregistration.repository.AnimalPartRepository;
+import org.example.station2_cuttingandpartsregistration.repository.TrayPartRepository;
+import org.example.station2_cuttingandpartsregistration.repository.TrayRepository;
 import org.example.station3_productregistration.model.OrderProduct;
 import org.example.station3_productregistration.model.Product;
 import org.example.station3_productregistration.model.ProductTray;
@@ -21,17 +24,21 @@ import java.util.stream.Collectors;
 @Service
 public class ProductRegistrationServiceImpl extends ProductRegistrationServiceGrpc.ProductRegistrationServiceImplBase {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
+
+    private final ProductTrayRepository productTrayRepository;
+
+    private final OrderProductRepository orderProductRepository;
+
+    private final DistributionOrderRepository distributionOrderRepository;
 
     @Autowired
-    private ProductTrayRepository productTrayRepository;
-
-    @Autowired
-    private OrderProductRepository orderProductRepository;
-
-    @Autowired
-    private DistributionOrderRepository distributionOrderRepository;
+    public ProductRegistrationServiceImpl(ProductRepository productRepository, ProductTrayRepository productTrayRepository, OrderProductRepository orderProductRepository, DistributionOrderRepository distributionOrderRepository) {
+        this.productRepository = productRepository;
+        this.productTrayRepository = productTrayRepository;
+        this.orderProductRepository = orderProductRepository;
+        this.distributionOrderRepository = distributionOrderRepository;
+    }
 
     @Override
     public void registerProduct(RegisterProductRequest request, StreamObserver<com.google.protobuf.Empty> responseObserver) {

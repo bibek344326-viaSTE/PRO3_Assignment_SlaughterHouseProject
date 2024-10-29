@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "org.example.station1_animalregistration")
 public class Station1AnimalRegistrationApplication {
 
     public static void main(String[] args) {

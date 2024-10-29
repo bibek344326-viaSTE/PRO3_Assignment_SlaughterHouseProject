@@ -16,11 +16,12 @@ public class GrpcServerConfig {
 
     private Server server;
 
+    // Inject AnimalRegistrationServiceImpl as a Spring Bean
     @Bean
-    public Server grpcServer() throws IOException, SQLException, ClassNotFoundException {
+    public Server grpcServer(AnimalRegistrationServiceImpl animalRegistrationServiceImpl) throws IOException, SQLException, ClassNotFoundException {
         int port = 9090; // Define your port
         server = ServerBuilder.forPort(port)
-                .addService(new AnimalRegistrationServiceImpl()) // Register your service
+                .addService(animalRegistrationServiceImpl) // Register the injected service
                 .build()
                 .start();
 

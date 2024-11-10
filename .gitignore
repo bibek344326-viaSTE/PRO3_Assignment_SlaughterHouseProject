@@ -1,0 +1,19 @@
+# Ignore Maven build output
+target/
+
+# Ignore IDE files (for example, IntelliJ or Eclipse)
+.idea/
+.vscode/
+*.iml
+
+# Ignore generated protobuf and gRPC files
+*.java  # If you have generated Java files from protobuf
+**/*.java
+*.proto
+generated/
+
+# Ignore Maven's local repository (if you want to ignore files from .m2)
+.m2/
+
+# Ignore log files
+*.log

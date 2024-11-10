@@ -72,12 +72,6 @@
             <version>1.3.2</version> <!-- You can check for the latest version -->
         </dependency>
         <dependency>
-            <groupId>org.example</groupId>
-            <artifactId>Station2_PartsProcessing</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>

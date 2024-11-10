@@ -1,54 +1,38 @@
 package org.example.station1_animalregistration.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "animals")
+@Data
+@AllArgsConstructor
 public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer animalId;
+    private Long id;
 
-    @Column(name = "registration_number", unique = true)
+    @Column(nullable = false, unique = true)
     private String registrationNumber;
 
-    private Double weight;
+    @Column(nullable = false)
+    private double weight;
 
-    @Column(name = "registration_date")
-    private Date registrationDate;
+    @Column(nullable = false)
+    private String origin;
 
-    // Getters and Setters
-    public Integer getAnimalId() {
-        return animalId;
-    }
+    @Column(nullable = false)
+    private LocalDate arrivalDate;
 
-    public void setAnimalId(Integer animalId) {
-        this.animalId = animalId;
-    }
+    public Animal() {}
 
-    public String getRegistrationNumber() {
-        return registrationNumber;
-    }
-
-    public void setRegistrationNumber(String registrationNumber) {
+    // Custom constructor for easier instantiation without ID
+    public Animal(String registrationNumber, double weight, String origin, LocalDate arrivalDate) {
         this.registrationNumber = registrationNumber;
-    }
-
-    public Double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Double weight) {
         this.weight = weight;
-    }
-
-    public Date getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public void setRegistrationDate(Date registrationDate) {
-        this.registrationDate = registrationDate;
+        this.origin = origin;
+        this.arrivalDate = arrivalDate;
     }
 }

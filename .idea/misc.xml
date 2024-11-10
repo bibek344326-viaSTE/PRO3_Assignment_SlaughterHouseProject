@@ -7,9 +7,16 @@
         <option value="$PROJECT_DIR$/Station2_CuttingAndPartsRegistration/pom.xml" />
         <option value="$PROJECT_DIR$/Station3_ProductRegistration/pom.xml" />
         <option value="$PROJECT_DIR$/Station1_AnimalRegistration/pom.xml" />
+        <option value="$PROJECT_DIR$/Station2_PartsProcessing/untitled/pom.xml" />
+        <option value="$PROJECT_DIR$/Station2_PartsProcessing/pom.xml" />
+        <option value="$PROJECT_DIR$/ProductAnimalInfoService/pom.xml" />
       </list>
     </option>
-    <option name="workspaceImportForciblyTurnedOn" value="true" />
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/Station2_PartsProcessing/untitled/pom.xml" />
+      </set>
+    </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="liberica-full-21 (2)" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />

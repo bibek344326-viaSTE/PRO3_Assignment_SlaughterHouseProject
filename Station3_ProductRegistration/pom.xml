@@ -73,7 +73,7 @@
         </dependency>
         <dependency>
             <groupId>org.example</groupId>
-            <artifactId>Station2_CuttingAndPartsRegistration</artifactId>
+            <artifactId>Station2_PartsProcessing</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

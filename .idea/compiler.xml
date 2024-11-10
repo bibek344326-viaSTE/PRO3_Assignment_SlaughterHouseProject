@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <excludeFromCompile>
+      <directory url="file://$PROJECT_DIR$/ProductAnimalInfoService/src/main/resources/archetype-resources" includeSubdirectories="true" />
+    </excludeFromCompile>
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
@@ -9,17 +12,20 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Station3_ProductRegistration" />
         <module name="Station1_AnimalRegistration" />
-        <module name="Station2_CuttingAndPartsRegistration" />
+        <module name="ProductAnimalInfoService" />
+        <module name="Station2_PartsProcessing" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Station_1_AnimalRegistration" target="21" />
+      <module name="untitled" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ProductAnimalInfoService" options="-parameters" />
       <module name="Station1_AnimalRegistration" options="-parameters" />
-      <module name="Station2_CuttingAndPartsRegistration" options="-parameters" />
+      <module name="Station2_PartsProcessing" options="-parameters" />
       <module name="Station3_ProductRegistration" options="-parameters" />
     </option>
   </component>

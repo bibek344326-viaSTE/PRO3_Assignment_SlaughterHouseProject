@@ -7,7 +7,6 @@ option java_multiple_files = true;
 option java_package = "org.example.station3_productregistration.grpc";
 option java_outer_classname = "ProductRegistrationProto";
 
-// Messages
 message Product {
   int32 product_id = 1;
   string product_type = 2;
@@ -21,7 +20,7 @@ message ProductTrays {
 message DistributionOrder {
   int32 order_id = 1;
   string customer_details = 2;
-  string shipping_date = 3; // Format: YYYY-MM-DD
+  string shipping_date = 3;
   bool recall_status = 4;
 }
 
@@ -79,7 +78,6 @@ message GetDistributionOrderByIdResponse {
   DistributionOrder distribution_order = 1;
 }
 
-// Service Definition
 service ProductRegistrationService {
   rpc RegisterProduct (RegisterProductRequest) returns (google.protobuf.Empty);
   rpc GetProductById (GetProductByIdRequest) returns (GetProductByIdResponse);

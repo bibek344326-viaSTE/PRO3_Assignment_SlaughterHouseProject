@@ -3,9 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/PRO3.iml" filepath="$PROJECT_DIR$/.idea/PRO3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ProductAnimalInfoService/ProductAnimalInfoService.iml" filepath="$PROJECT_DIR$/ProductAnimalInfoService/ProductAnimalInfoService.iml" />
       <module fileurl="file://$PROJECT_DIR$/Station1_AnimalRegistration/Station1_AnimalRegistration.iml" filepath="$PROJECT_DIR$/Station1_AnimalRegistration/Station1_AnimalRegistration.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Station2_CuttingAndPartsRegistration/Station2_CuttingAndPartsRegistration.iml" filepath="$PROJECT_DIR$/Station2_CuttingAndPartsRegistration/Station2_CuttingAndPartsRegistration.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Station3_ProductRegistration/Station3_ProductRegistration.iml" filepath="$PROJECT_DIR$/Station3_ProductRegistration/Station3_ProductRegistration.iml" />
     </modules>
   </component>
 </project>

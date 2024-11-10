@@ -11,7 +11,7 @@ public class AnimalClient {
     private final WebClient webClient;
 
     public AnimalClient(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/api/animals").build();
+        this.webClient = webClientBuilder.baseUrl("http://localhost:8081/api/animals").build();
     }
 
     public Mono<String> registerAnimal(Animal animal) {

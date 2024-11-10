@@ -39,4 +39,15 @@ public class AnimalController {
         List<Animal> animals = animalService.getAnimalsByOrigin(origin);
         return ResponseEntity.ok(animals);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<Animal> updateAnimal(@PathVariable Long id, @RequestBody Animal animalDetails) {
+        Animal updatedAnimal = animalService.updateAnimal(id, animalDetails);
+        return ResponseEntity.ok(updatedAnimal);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAnimal(@PathVariable Long id) {
+        animalService.deleteAnimal(id);
+        return ResponseEntity.noContent().build();
+    }
 }

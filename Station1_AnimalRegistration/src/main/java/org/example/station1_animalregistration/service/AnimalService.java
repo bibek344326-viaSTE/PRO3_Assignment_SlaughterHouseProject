@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AnimalService {
@@ -24,15 +23,28 @@ public class AnimalService {
         return animalRepository.save(animal);
     }
 
-    public Optional<Animal> getAnimalById(Long id) {
-        return animalRepository.findById(id);
-    }
-
     public List<Animal> getAnimalsByArrivalDate(LocalDate arrivalDate) {
         return animalRepository.findByArrivalDate(arrivalDate);
     }
 
     public List<Animal> getAnimalsByOrigin(String origin) {
         return animalRepository.findByOrigin(origin);
+    }
+    public Animal updateAnimal(Long id, Animal animalDetails) {
+        Animal existingAnimal = animalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Animal not found with id " + id));
+
+        existingAnimal.setRegistrationNumber(animalDetails.getRegistrationNumber());
+        existingAnimal.setWeight(animalDetails.getWeight());
+        existingAnimal.setOrigin(animalDetails.getOrigin());
+        existingAnimal.setArrivalDate(animalDetails.getArrivalDate());
+
+        return animalRepository.save(existingAnimal);
+    }
+
+    public void deleteAnimal(Long id) {
+        Animal existingAnimal = animalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Animal not found with id " + id));
+        animalRepository.delete(existingAnimal);
     }
 }

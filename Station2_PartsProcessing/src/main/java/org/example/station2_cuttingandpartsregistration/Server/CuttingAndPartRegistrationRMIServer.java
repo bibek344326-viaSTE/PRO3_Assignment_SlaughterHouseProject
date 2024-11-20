@@ -36,33 +36,46 @@ public class CuttingAndPartRegistrationRMIServer extends UnicastRemoteObject imp
             pstmt.executeUpdate();
             System.out.println("Added part: " + partType + " for animal ID: " + animalId);
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RemoteException("Error adding animal part.");
+            e.printStackTrace();  // Print the stack trace
+            System.err.println("SQL State: " + e.getSQLState());  // Print SQL state
+            System.err.println("Error Code: " + e.getErrorCode());  // Print SQL error code
+            throw new RemoteException("Error adding animal part.", e);  // Pass the exception to the RemoteException
         }
     }
 
     // Get all parts for an animal
     @Override
-public List<String> getAnimalParts(int animalId) throws RemoteException {
-    System.out.println("Fetching parts for animal ID: " + animalId); // Debugging output
-    String query = "SELECT part_id, part_type, weight FROM animal_parts WHERE animal_id = ?";
-    List<String> partDescriptions = new ArrayList<>();
-    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-        pstmt.setInt(1, animalId);
-        ResultSet rs = pstmt.executeQuery();
-        while (rs.next()) {
-            int partId = rs.getInt("part_id");
-            String partType = rs.getString("part_type");
-            double weight = rs.getDouble("weight");
-            partDescriptions.add("PartID: " + partId + ", Type: " + partType + ", Weight: " + weight);
-            System.out.println("Fetched part: " + partType + " with weight: " + weight); // Debugging output
+    public List<String> getAnimalParts(int animalId) throws RemoteException {
+        System.out.println("Fetching parts for animal ID: " + animalId); // Debugging output
+        String query = "SELECT part_id, part_type, weight FROM animal_parts WHERE animal_id = ?";
+        List<String> partDescriptions = new ArrayList<>();
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, animalId);
+            ResultSet rs = pstmt.executeQuery();
+
+            // Debugging to see if results are returned
+            boolean hasResults = false;
+            while (rs.next()) {
+                hasResults = true;
+                int partId = rs.getInt("part_id");
+                String partType = rs.getString("part_type");
+                double weight = rs.getDouble("weight");
+                partDescriptions.add("PartID: " + partId + ", Type: " + partType + ", Weight: " + weight);
+                System.out.println("Fetched part: " + partType + " with weight: " + weight); // Debugging output
+            }
+
+            if (!hasResults) {
+                System.out.println("No parts found for animal ID: " + animalId);
+            }
+
+        } catch (SQLException e) {
+            // Print full stack trace and pass it to RemoteException for better debugging
+            e.printStackTrace();
+            throw new RemoteException("Error retrieving animal parts: " + e.getMessage(), e);
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-        throw new RemoteException("Error retrieving animal parts.");
+        return partDescriptions;
     }
-    return partDescriptions;
-}
+
 
 
     // Add a new tray

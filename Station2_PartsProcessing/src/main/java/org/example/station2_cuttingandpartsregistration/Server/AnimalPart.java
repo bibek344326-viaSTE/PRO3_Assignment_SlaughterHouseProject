@@ -1,7 +1,7 @@
 package org.example.station2_cuttingandpartsregistration.Server;
 
 public class AnimalPart {
-                  private int partId;
+    private int partId;
     private String partType;
     private double weight;
 

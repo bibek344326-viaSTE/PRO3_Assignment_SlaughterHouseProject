@@ -13,7 +13,7 @@ public class Station1AnimalRegistrationApplication {
     }
 
     @Component
-    public class AppStartupRunner implements CommandLineRunner {
+    public static class AppStartupRunner implements CommandLineRunner {
 
         @Override
         public void run(String... args) throws Exception {

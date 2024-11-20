@@ -2,6 +2,7 @@ package org.example.station1_animalregistration;
 
 import org.example.station1_animalregistration.model.Animal;
 import org.example.station1_animalregistration.repository.AnimalRepository;
+import org.example.station1_animalregistration.service.AnimalDTO;
 import org.example.station1_animalregistration.service.AnimalService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,11 +36,17 @@ public class AnimalServiceTest {
 
     @Test
     public void testRegisterAnimal() {
-        // Arrange: Mock the repository behavior
+        // Arrange: Create an AnimalDTO and mock the repository behavior
+        AnimalDTO animalDTO = new AnimalDTO();
+        animalDTO.setRegistrationNumber("12345");
+        animalDTO.setWeight(500.0);
+        animalDTO.setOrigin("Farm A");
+        animalDTO.setArrivalDate(LocalDate.of(2023, 10, 10));
+
         when(animalRepository.save(any(Animal.class))).thenReturn(animal);
 
         // Act: Call the service method
-        Animal savedAnimal = animalService.registerAnimal(animal);
+        Animal savedAnimal = animalService.registerAnimal(animalDTO);
 
         // Assert: Validate the result
         assertNotNull(savedAnimal);
@@ -47,6 +54,7 @@ public class AnimalServiceTest {
         assertEquals(500.0, savedAnimal.getWeight());
         assertEquals("Farm A", savedAnimal.getOrigin());
     }
+
 
     @Test
     public void testGetAnimalsByArrivalDate() {

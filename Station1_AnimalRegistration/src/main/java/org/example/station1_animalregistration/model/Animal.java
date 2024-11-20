@@ -8,8 +8,6 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Entity
-@Data
-@AllArgsConstructor
 @Table(name = "animals")
 public class Animal {
     @Id
@@ -30,12 +28,56 @@ public class Animal {
     @JsonProperty("arrival_date")
     private LocalDate arrivalDate;
 
+    // No-argument constructor
     public Animal() {}
 
+    // Constructor with parameters
     public Animal(String registrationNumber, double weight, String origin, LocalDate arrivalDate) {
         this.registrationNumber = registrationNumber;
         this.weight = weight;
         this.origin = origin;
+        this.arrivalDate = arrivalDate;
+    }
+
+    // Getters and Setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
+
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    public LocalDate getArrivalDate() {
+        return arrivalDate;
+    }
+
+    public void setArrivalDate(LocalDate arrivalDate) {
         this.arrivalDate = arrivalDate;
     }
 }

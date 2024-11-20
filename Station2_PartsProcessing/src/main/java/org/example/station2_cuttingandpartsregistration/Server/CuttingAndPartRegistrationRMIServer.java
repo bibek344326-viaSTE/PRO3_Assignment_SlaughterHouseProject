@@ -78,22 +78,41 @@ public class CuttingAndPartRegistrationRMIServer extends UnicastRemoteObject imp
 
 
 
-    // Add a new tray
     @Override
     public void addTray(String partType, double maxWeightCapacity) throws RemoteException {
         String query = "INSERT INTO trays (part_type, max_weight_capacity) VALUES (?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            // Log the parameters being set
+            System.out.println("Setting parameters: partType = " + partType + ", maxWeightCapacity = " + maxWeightCapacity);
+
             pstmt.setString(1, partType);
             pstmt.setDouble(2, maxWeightCapacity);
-            pstmt.executeUpdate();
-            System.out.println("Added tray: " + partType + " with max weight: " + maxWeightCapacity);
+
+            // Execute the query
+            int rowsAffected = pstmt.executeUpdate();
+
+            // Check if the tray was added successfully
+            if (rowsAffected > 0) {
+                System.out.println("Added tray: " + partType + " with max weight: " + maxWeightCapacity);
+            } else {
+                System.err.println("No rows were inserted. Tray not added.");
+            }
+
         } catch (SQLException e) {
+            // Log more details about the exception
+            System.err.println("SQL error occurred while adding tray.");
+            System.err.println("Query: " + query);
+            System.err.println("Error message: " + e.getMessage());
+            System.err.println("SQLState: " + e.getSQLState());
+            System.err.println("Error code: " + e.getErrorCode());
             e.printStackTrace();
-            throw new RemoteException("Error adding tray.");
+
+            // Rethrow the exception to maintain existing behavior
+            throw new RemoteException("Error adding tray.", e);
         }
     }
 
-    // Add a part to a tray
+
     // Add a part to a tray
     @Override
     public void addPartToTray(int trayId, int partId) throws RemoteException {
@@ -104,6 +123,11 @@ public class CuttingAndPartRegistrationRMIServer extends UnicastRemoteObject imp
             pstmt.executeUpdate();
             System.out.println("Added part ID: " + partId + " to tray ID: " + trayId);
         } catch (SQLException e) {
+            // Log more details about the exception
+            System.err.println("SQL error occurred while adding part to tray.");
+            System.err.println("Query: " + query);
+            System.err.println("Tray ID: " + trayId + ", Part ID: " + partId);
+            System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
             throw new RemoteException("Error adding part to tray.");
         }
@@ -123,18 +147,21 @@ public class CuttingAndPartRegistrationRMIServer extends UnicastRemoteObject imp
                 trayDescriptions.add("TrayID: " + trayId + ", Type: " + partType + ", Max Capacity: " + maxCapacity);
             }
         } catch (SQLException e) {
+            // Log more details about the exception
+            System.err.println("SQL error occurred while retrieving trays.");
+            System.err.println("Query: " + query);
+            System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
             throw new RemoteException("Error retrieving trays.");
         }
         return trayDescriptions;
     }
 
-
-     // Get parts in a specific tray
+    // Get parts in a specific tray
     @Override
     public List<String> getPartsInTray(int trayId) throws RemoteException {
         String query = "SELECT p.part_id, p.part_type, p.weight FROM tray_parts tp " +
-                "JOIN animal_parts p ON tp.part_id = p.part_id WHERE tp.tray_id = ?";
+            "JOIN animal_parts p ON tp.part_id = p.part_id WHERE tp.tray_id = ?";
         List<String> partDescriptions = new ArrayList<>();
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, trayId);
@@ -146,6 +173,11 @@ public class CuttingAndPartRegistrationRMIServer extends UnicastRemoteObject imp
                 partDescriptions.add("PartID: " + partId + ", Type: " + partType + ", Weight: " + weight);
             }
         } catch (SQLException e) {
+            // Log more details about the exception
+            System.err.println("SQL error occurred while retrieving parts in tray.");
+            System.err.println("Query: " + query);
+            System.err.println("Tray ID: " + trayId);
+            System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
             throw new RemoteException("Error retrieving parts in tray.");
         }

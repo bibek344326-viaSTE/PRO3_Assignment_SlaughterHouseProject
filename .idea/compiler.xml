@@ -17,6 +17,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Station2_CuttingAndPartsRegistration" target="21" />
       <module name="Station_1_AnimalRegistration" target="21" />
       <module name="untitled" target="21" />
     </bytecodeTargetLevel>

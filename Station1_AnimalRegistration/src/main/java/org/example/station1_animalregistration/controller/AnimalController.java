@@ -1,6 +1,7 @@
 package org.example.station1_animalregistration.controller;
 
 import org.example.station1_animalregistration.model.Animal;
+import org.example.station1_animalregistration.service.AnimalDTO;
 import org.example.station1_animalregistration.service.AnimalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,10 +23,11 @@ public class AnimalController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Animal> registerAnimal(@RequestBody Animal animal) {
-        Animal savedAnimal = animalService.registerAnimal(animal);
+    public ResponseEntity<Animal> registerAnimal(@RequestBody AnimalDTO animalDTO) {
+        Animal savedAnimal = animalService.registerAnimal(animalDTO);
         return ResponseEntity.ok(savedAnimal);
     }
+
 
     @GetMapping("/by-date")
     public ResponseEntity<List<Animal>> getAnimalsByArrivalDate(

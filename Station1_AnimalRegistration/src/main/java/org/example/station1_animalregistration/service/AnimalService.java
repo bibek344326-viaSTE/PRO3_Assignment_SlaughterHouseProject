@@ -19,9 +19,19 @@ public class AnimalService {
         this.animalRepository = animalRepository;
     }
 
-    public Animal registerAnimal(Animal animal) {
+    // Your service method
+    public Animal registerAnimal(AnimalDTO animalDTO) {
+        // Convert DTO to Entity
+        Animal animal = new Animal();
+        animal.setRegistrationNumber(animalDTO.getRegistrationNumber());
+        animal.setWeight(animalDTO.getWeight());
+        animal.setOrigin(animalDTO.getOrigin());
+        animal.setArrivalDate(animalDTO.getArrivalDate());
+
+        // Save the animal entity (ID will be auto-generated)
         return animalRepository.save(animal);
     }
+
 
     public List<Animal> getAnimalsByArrivalDate(LocalDate arrivalDate) {
         return animalRepository.findByArrivalDate(arrivalDate);

@@ -11,12 +11,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Station3_ProductRegistration" />
+        <module name="Product-Animal-Info-Service" />
         <module name="Station1_AnimalRegistration" />
         <module name="Station2_PartsProcessing" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Product-Animal-Info-Service" target="15" />
       <module name="ProductAnimalInfoService" target="21" />
       <module name="Station2_CuttingAndPartsRegistration" target="21" />
       <module name="Station_1_AnimalRegistration" target="21" />

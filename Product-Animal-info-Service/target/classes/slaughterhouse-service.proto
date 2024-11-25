@@ -1,7 +1,8 @@
 syntax = "proto3";
 
-
 option java_multiple_files = true;
+option java_package = "slaughterhouse";
+option java_outer_classname = "SlaughterhouseProto";
 
 service SlaughterhouseService {
   rpc GetAnimalsForProduct (ProductRequest) returns (AnimalResponse);
@@ -9,17 +10,17 @@ service SlaughterhouseService {
 }
 
 message ProductRequest {
-  string product_id = 1; // ID of the product
+  string product_id = 1;
 }
 
 message AnimalRequest {
-  string animal_id = 1; // ID of the animal
+  string animal_id = 1;
 }
 
 message AnimalResponse {
-  repeated string animal_ids = 1; // List of animal IDs
+  repeated string animal_ids = 1;
 }
 
 message ProductResponse {
-  repeated string product_ids = 1; // List of product IDs
+  repeated string product_ids = 1;
 }

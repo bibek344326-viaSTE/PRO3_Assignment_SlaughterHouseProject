@@ -17,6 +17,11 @@
 		<grpc.version>1.42.1</grpc.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.4</version>
+		</dependency>
 
 		<dependency>
 			<groupId>net.devh</groupId>

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <excludeFromCompile>
-      <directory url="file://$PROJECT_DIR$/ProductAnimalInfoService/src/main/resources/archetype-resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/Product-Animal-info-Service/src/main/resources/archetype-resources" includeSubdirectories="true" />
     </excludeFromCompile>
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
@@ -13,10 +13,10 @@
         <module name="Station3_ProductRegistration" />
         <module name="Station1_AnimalRegistration" />
         <module name="Station2_PartsProcessing" />
-        <module name="Spring-Boot-GRPC-Server-Example" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Product-Animal-Info-Service" target="15" />
       <module name="ProductAnimalInfoService" target="21" />
       <module name="Station2_CuttingAndPartsRegistration" target="21" />
       <module name="Station_1_AnimalRegistration" target="21" />
@@ -25,8 +25,8 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Product-Animal-Info-Service" options="-parameters" />
       <module name="ProductAnimalInfoService" options="-parameters" />
-      <module name="Spring-Boot-GRPC-Server-Example" options="-parameters" />
       <module name="Station1_AnimalRegistration" options="-parameters" />
       <module name="Station2_PartsProcessing" options="-parameters" />
       <module name="Station3_ProductRegistration" options="-parameters" />

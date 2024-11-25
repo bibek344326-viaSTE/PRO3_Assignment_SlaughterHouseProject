@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+
+option java_multiple_files = true;
+option java_package = "com.javainuse.employee";
+
+service SlaughterhouseService {
+  rpc GetAnimalsForProduct (ProductRequest) returns (AnimalResponse);
+  rpc GetProductsForAnimal (AnimalRequest) returns (ProductResponse);
+}
+
+message ProductRequest {
+  string product_id = 1;
+}
+
+message AnimalRequest {
+  string animal_id = 1;
+}
+
+message AnimalResponse {
+  repeated string animal_ids = 1;
+}
+
+message ProductResponse {
+  repeated string product_ids = 1;
+}

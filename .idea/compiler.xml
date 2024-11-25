@@ -11,9 +11,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Station3_ProductRegistration" />
+        <module name="Spring-Boot-GRPC-Server" />
         <module name="Station1_AnimalRegistration" />
         <module name="Station2_PartsProcessing" />
-        <module name="Spring-Boot-GRPC-Server-Example" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -28,7 +28,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Product-Animal-Info-Service" options="-parameters" />
       <module name="ProductAnimalInfoService" options="-parameters" />
-      <module name="Spring-Boot-GRPC-Server-Example" options="-parameters" />
+      <module name="Spring-Boot-GRPC-Server" options="-parameters" />
       <module name="Station1_AnimalRegistration" options="-parameters" />
       <module name="Station2_PartsProcessing" options="-parameters" />
       <module name="Station3_ProductRegistration" options="-parameters" />

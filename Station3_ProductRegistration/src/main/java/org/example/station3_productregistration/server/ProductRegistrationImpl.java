@@ -80,6 +80,17 @@ public class ProductRegistrationImpl extends UnicastRemoteObject implements Prod
     @Override
     public void assignTrayToProduct(int trayId, int productId) throws RemoteException {
         try {
+            // Step 1: Validate that the product exists
+            String productExistsQuery = "SELECT COUNT(*) AS count FROM products WHERE product_id = ?";
+            try (PreparedStatement productExistsStmt = connection.prepareStatement(productExistsQuery)) {
+                productExistsStmt.setInt(1, productId);
+                ResultSet productExistsRs = productExistsStmt.executeQuery();
+                if (productExistsRs.next() && productExistsRs.getInt("count") == 0) {
+                    throw new RemoteException("Product with ID " + productId + " does not exist.");
+                }
+            }
+
+            // Step 2: Validate that the tray exists
             String trayExistsQuery = "SELECT COUNT(*) AS count FROM trays WHERE tray_id = ?";
             try (PreparedStatement trayExistsStmt = connection.prepareStatement(trayExistsQuery)) {
                 trayExistsStmt.setInt(1, trayId);
@@ -88,15 +99,8 @@ public class ProductRegistrationImpl extends UnicastRemoteObject implements Prod
                     throw new RemoteException("Tray with ID " + trayId + " does not exist.");
                 }
             }
-            String productExistsQuery = "SELECT product_type FROM products WHERE product_id = ?";
-            try (PreparedStatement productExistsStmt = connection.prepareStatement(productExistsQuery)) {
-                productExistsStmt.setInt(1, productId);
-                ResultSet productExistsRs = productExistsStmt.executeQuery();
-                if (!productExistsRs.next()) {
-                    throw new RemoteException("Product with ID " + productId + " does not exist.");
-                }
-            }
 
+            // Step 3: Create the relationship in the product_trays table
             String assignTrayQuery = "INSERT INTO product_trays (tray_id, product_id) VALUES (?, ?)";
             try (PreparedStatement assignTrayStmt = connection.prepareStatement(assignTrayQuery)) {
                 assignTrayStmt.setInt(1, trayId);
@@ -109,6 +113,7 @@ public class ProductRegistrationImpl extends UnicastRemoteObject implements Prod
             throw new RemoteException("Error while assigning tray to product: " + e.getMessage(), e);
         }
     }
+
 
 
     public static void main(String[] args) {

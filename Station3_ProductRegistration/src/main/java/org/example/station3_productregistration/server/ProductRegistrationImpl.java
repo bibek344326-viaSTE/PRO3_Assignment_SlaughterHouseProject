@@ -88,6 +88,14 @@ public class ProductRegistrationImpl extends UnicastRemoteObject implements Prod
                     throw new RemoteException("Tray with ID " + trayId + " does not exist.");
                 }
             }
+            String productExistsQuery = "SELECT product_type FROM products WHERE product_id = ?";
+            try (PreparedStatement productExistsStmt = connection.prepareStatement(productExistsQuery)) {
+                productExistsStmt.setInt(1, productId);
+                ResultSet productExistsRs = productExistsStmt.executeQuery();
+                if (!productExistsRs.next()) {
+                    throw new RemoteException("Product with ID " + productId + " does not exist.");
+                }
+            }
 
             String assignTrayQuery = "INSERT INTO product_trays (tray_id, product_id) VALUES (?, ?)";
             try (PreparedStatement assignTrayStmt = connection.prepareStatement(assignTrayQuery)) {
@@ -105,7 +113,6 @@ public class ProductRegistrationImpl extends UnicastRemoteObject implements Prod
 
     public static void main(String[] args) {
         try {
-            // Start RMI registry
             LocateRegistry.createRegistry(1099);
             ProductRegistrationRMI productService = new ProductRegistrationImpl();
             Naming.rebind("//localhost/ProductService", productService);

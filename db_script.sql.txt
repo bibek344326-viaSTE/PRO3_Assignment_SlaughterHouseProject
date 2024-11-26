@@ -1,0 +1,101 @@
+-- Create the slaughterhousedb database (if not created already)
+-- CREATE DATABASE slaughterhousedb;
+
+SET search_path TO slaughterhousedb;
+
+-- Table for products
+CREATE TABLE slaughterhousedb.products (
+    product_id INT PRIMARY KEY,
+    product_type VARCHAR(255) NOT NULL
+);
+
+-- Table for product trays (many-to-many relationship between products and trays)
+CREATE TABLE slaughterhousedb.product_trays (
+    product_id INT,
+    tray_id INT,
+    PRIMARY KEY (product_id, tray_id),
+    FOREIGN KEY (product_id) REFERENCES slaughterhousedb.products(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (tray_id) REFERENCES slaughterhousedb.trays(tray_id) ON DELETE CASCADE
+);
+
+-- Table for animals
+CREATE TABLE slaughterhousedb.animals (
+    animal_id INT AUTO_INCREMENT PRIMARY KEY,  -- Auto-increment ID
+    animal_type VARCHAR(255) NOT NULL,         
+    weight DOUBLE PRECISION NOT NULL,        
+    registration_number VARCHAR(255) UNIQUE, 
+    origin VARCHAR(255) NOT NULL,          
+    arrival_date DATE NOT NULL
+);
+
+
+-- Table for animal parts
+CREATE TABLE slaughterhousedb.animal_parts (
+    part_id INT PRIMARY KEY,
+    animal_id INT NOT NULL,
+    part_type VARCHAR(255) NOT NULL,
+    weight DOUBLE PRECISION NOT NULL,
+    FOREIGN KEY (animal_id) REFERENCES slaughterhousedb.animals(animal_id) ON DELETE CASCADE
+);
+
+-- Table for trays
+CREATE TABLE slaughterhousedb.trays (
+    tray_id INT PRIMARY KEY,
+    part_type VARCHAR(255) NOT NULL,
+    max_weight_capacity DOUBLE PRECISION NOT NULL
+);
+
+-- Table for the relationship between trays and parts
+CREATE TABLE slaughterhousedb.tray_parts (
+    tray_id INT,
+    part_id INT,
+    PRIMARY KEY (tray_id, part_id),
+    FOREIGN KEY (tray_id) REFERENCES slaughterhousedb.trays(tray_id) ON DELETE CASCADE,
+    FOREIGN KEY (part_id) REFERENCES slaughterhousedb.animal_parts(part_id) ON DELETE CASCADE
+);
+
+-- CREATE SCHEMA slaughterhousedb;
+
+
+INSERT INTO slaughterhousedb.animals (animal_id, animal_type, weight, registration_number, origin, arrival_date)
+VALUES 
+(1, 'Cow', 650.5, 'REG123', 'Farm A', '2024-11-01'),
+(2, 'Pig', 150.8, 'REG124', 'Farm B', '2024-11-02'),
+(3, 'Sheep', 75.3, 'REG125', 'Farm C', '2024-11-02');
+
+INSERT INTO slaughterhousedb.animal_parts (part_id, animal_id, part_type, weight)
+VALUES 
+(1, 1, 'Leg', 15.0),
+(2, 1, 'Shoulder', 20.0),
+(3, 1, 'Ribs', 30.0),
+(4, 2, 'Leg', 10.5),
+(5, 2, 'Belly', 40.3),
+(6, 3, 'Leg', 8.2);
+
+INSERT INTO slaughterhousedb.trays (tray_id, part_type, max_weight_capacity)
+VALUES 
+(1, 'Leg', 100.0),
+(2, 'Shoulder', 50.0),
+(3, 'Ribs', 80.0),
+(4, 'Belly', 90.0);
+
+INSERT INTO slaughterhousedb.tray_parts (tray_id, part_id)
+VALUES 
+(1, 1), -- Leg from Cow
+(1, 4), -- Leg from Pig
+(1, 6), -- Leg from Sheep
+(2, 2), -- Shoulder from Cow
+(3, 3), -- Ribs from Cow
+(4, 5); -- Belly from Pig
+
+INSERT INTO slaughterhousedb.products (product_id, product_type)
+VALUES 
+(1, 'Supermarket Leg Pack'),
+(2, 'Half Cow Pack');
+
+INSERT INTO slaughterhousedb.product_trays (product_id, tray_id)
+VALUES 
+(1, 1), -- Legs for Supermarket Pack
+(2, 1), -- Legs for Half Cow Pack
+(2, 2), -- Shoulder for Half Cow Pack
+(2, 3); -- Ribs for Half Cow Pack

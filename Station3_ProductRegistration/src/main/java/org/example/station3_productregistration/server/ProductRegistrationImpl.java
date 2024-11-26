@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ProductRegistrationImpl extends UnicastRemoteObject implements ProductRegistrationRMI {
 
     private Connection connection;
@@ -45,7 +44,7 @@ public class ProductRegistrationImpl extends UnicastRemoteObject implements Prod
     @Override
     public List<String> getProductById(int productId) throws RemoteException {
         String query = "SELECT * FROM products WHERE product_id = ?";
-        List<String> productList =new ArrayList<>();
+        List<String> productList = new ArrayList<>();
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, productId);
@@ -53,7 +52,7 @@ public class ProductRegistrationImpl extends UnicastRemoteObject implements Prod
             if (rs.next()) {
                 int product_id = rs.getInt("product_id");
                 String product_type = rs.getString("product_type");
-                productList.add("Product id: " + product_id + " Product type: "+ product_type);
+                productList.add("Product ID: " + product_id + ", Product Type: " + product_type);
             } else {
                 throw new RemoteException("Product not found for ID: " + productId);
             }
@@ -63,13 +62,12 @@ public class ProductRegistrationImpl extends UnicastRemoteObject implements Prod
         return productList;
     }
 
-
     @Override
     public List<ProductTrays> getAllProductTrays() throws RemoteException {
         String query = "SELECT * FROM product_trays";
         List<ProductTrays> trays = new ArrayList<>();
         try (PreparedStatement stmt = connection.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+            ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 trays.add(new ProductTrays(rs.getInt("product_id"), rs.getInt("tray_id")));
             }
@@ -80,84 +78,89 @@ public class ProductRegistrationImpl extends UnicastRemoteObject implements Prod
     }
 
     @Override
-    public List<ProductTrays> getAllProductTypes() throws RemoteException {
-        String query = "SELECT DISTINCT product_type FROM products";
-        List<ProductTrays> types = new ArrayList<>();
-        try (PreparedStatement stmt = connection.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                types.add(new ProductTrays(rs.getInt("product_id"), rs.getInt("tray_id")));  // Assuming tray_id can represent a tray for types.
+    public void assignTrayToProduct(int trayId, int productId) throws RemoteException {
+        try {
+            // Check if the tray exists
+            String trayExistsQuery = "SELECT COUNT(*) AS count FROM trays WHERE tray_id = ?";
+            try (PreparedStatement trayExistsStmt = connection.prepareStatement(trayExistsQuery)) {
+                trayExistsStmt.setInt(1, trayId);
+                ResultSet trayExistsRs = trayExistsStmt.executeQuery();
+                if (trayExistsRs.next() && trayExistsRs.getInt("count") == 0) {
+                    throw new RemoteException("Tray with ID " + trayId + " does not exist.");
+                }
             }
-        } catch (SQLException e) {
-            throw new RemoteException("Error while fetching product types", e);
-        }
-        return types;
-    }
 
-
-    @Override
-    public void createOrder(int orderId, int productId) throws RemoteException {
-        String query = "INSERT INTO order_products (order_id, product_id) VALUES (?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, orderId);
-            stmt.setInt(2, productId);
-            stmt.executeUpdate();
-            System.out.println("Order created successfully.");
-        } catch (SQLException e) {
-            throw new RemoteException("Error while creating order", e);
-        }
-    }
-
-    @Override
-    public OrderProducts getOrderById(int orderId) throws RemoteException {
-        String query = "SELECT * FROM order_products WHERE order_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, orderId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new OrderProducts(rs.getInt("order_id"), rs.getInt("product_id"));
-            } else {
-                throw new RemoteException("Order not found for ID: " + orderId);
+            // Check if the tray contains only one type of parts
+            String singlePartTypeQuery = """
+            SELECT COUNT(DISTINCT t.part_type) AS distinct_types
+            FROM trays t
+            JOIN tray_parts tp ON t.tray_id = tp.tray_id
+            WHERE t.tray_id = ?
+        """;
+            try (PreparedStatement singlePartTypeStmt = connection.prepareStatement(singlePartTypeQuery)) {
+                singlePartTypeStmt.setInt(1, trayId);
+                ResultSet singlePartTypeRs = singlePartTypeStmt.executeQuery();
+                if (singlePartTypeRs.next() && singlePartTypeRs.getInt("distinct_types") != 1) {
+                    throw new RemoteException("Tray with ID " + trayId + " contains multiple part types.");
+                }
             }
-        } catch (SQLException e) {
-            throw new RemoteException("Error while fetching order details", e);
-        }
-    }
 
-    @Override
-    public void createDistributionOrder(int orderId, String customerDetails, String shippingDate) throws RemoteException {
-        String query = "INSERT INTO distribution_orders (order_id, customer_details, shipping_date) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, orderId);
-            stmt.setString(2, customerDetails);
-            stmt.setString(3, shippingDate);
-            stmt.executeUpdate();
-            System.out.println("Distribution order created successfully.");
-        } catch (SQLException e) {
-            throw new RemoteException("Error while creating distribution order", e);
-        }
-    }
-
-    @Override
-    public DistributionOrders getDistributionOrderById(int orderId) throws RemoteException {
-        String query = "SELECT * FROM distribution_orders WHERE order_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, orderId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new DistributionOrders(
-                        rs.getInt("order_id"),
-                        rs.getString("customer_details"),
-                        rs.getDate("shipping_date"),
-                        rs.getBoolean("recall_status")
-                );
-            } else {
-                throw new RemoteException("Distribution order not found for ID: " + orderId);
+            // Check if the tray's weight exceeds its capacity
+            String trayWeightQuery = """
+            SELECT SUM(ap.weight) AS total_weight, t.max_weight_capacity
+            FROM trays t
+            JOIN tray_parts tp ON t.tray_id = tp.tray_id
+            JOIN animal_parts ap ON tp.part_id = ap.part_id
+            WHERE t.tray_id = ?
+            GROUP BY t.max_weight_capacity
+        """;
+            try (PreparedStatement trayWeightStmt = connection.prepareStatement(trayWeightQuery)) {
+                trayWeightStmt.setInt(1, trayId);
+                ResultSet trayWeightRs = trayWeightStmt.executeQuery();
+                if (trayWeightRs.next()) {
+                    double totalWeight = trayWeightRs.getDouble("total_weight");
+                    double maxCapacity = trayWeightRs.getDouble("max_weight_capacity");
+                    if (totalWeight > maxCapacity) {
+                        throw new RemoteException("Tray with ID " + trayId + " exceeds its weight capacity.");
+                    }
+                }
             }
+
+            // Check if the product exists
+            String productExistsQuery = "SELECT COUNT(*) AS count FROM products WHERE product_id = ?";
+            try (PreparedStatement productExistsStmt = connection.prepareStatement(productExistsQuery)) {
+                productExistsStmt.setInt(1, productId);
+                ResultSet productExistsRs = productExistsStmt.executeQuery();
+                if (productExistsRs.next() && productExistsRs.getInt("count") == 0) {
+                    throw new RemoteException("Product with ID " + productId + " does not exist.");
+                }
+            }
+
+            // Ensure the tray is not already assigned to the product
+            String trayAssignedQuery = "SELECT COUNT(*) AS count FROM product_trays WHERE tray_id = ? AND product_id = ?";
+            try (PreparedStatement trayAssignedStmt = connection.prepareStatement(trayAssignedQuery)) {
+                trayAssignedStmt.setInt(1, trayId);
+                trayAssignedStmt.setInt(2, productId);
+                ResultSet trayAssignedRs = trayAssignedStmt.executeQuery();
+                if (trayAssignedRs.next() && trayAssignedRs.getInt("count") > 0) {
+                    throw new RemoteException("Tray with ID " + trayId + " is already assigned to Product ID " + productId);
+                }
+            }
+
+            // Assign the tray to the product
+            String assignTrayQuery = "INSERT INTO product_trays (tray_id, product_id) VALUES (?, ?)";
+            try (PreparedStatement assignTrayStmt = connection.prepareStatement(assignTrayQuery)) {
+                assignTrayStmt.setInt(1, trayId);
+                assignTrayStmt.setInt(2, productId);
+                assignTrayStmt.executeUpdate();
+                System.out.println("Tray with ID " + trayId + " successfully assigned to Product ID " + productId);
+            }
+
         } catch (SQLException e) {
-            throw new RemoteException("Error while fetching distribution order details", e);
+            throw new RemoteException("Error while assigning tray to product: " + e.getMessage(), e);
         }
     }
+
     public static void main(String[] args) {
         try {
             // Start RMI registry

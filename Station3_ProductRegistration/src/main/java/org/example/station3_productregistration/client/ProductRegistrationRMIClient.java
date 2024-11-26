@@ -21,59 +21,80 @@ public class ProductRegistrationRMIClient {
 
         while (!exit) {
             System.out.println("\nProduct Registration Client Menu:");
-            System.out.println("1. Create Order");
+            System.out.println("1. Register Product");
             System.out.println("2. View Product Trays");
             System.out.println("3. Get Product Details");
-            System.out.println("4. Exit");
-            System.out.print("Enter your choice (1-4): ");
+            System.out.println("4. Assign Tray to Product");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice (1-5): ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine();  // Consume the newline character
+            scanner.nextLine(); // Consume the newline character
 
             switch (choice) {
-                case 1: // Create Order
-                    System.out.print("Enter Product ID to create an order: ");
-                    int productId = scanner.nextInt();
-                    scanner.nextLine();  // Consume the newline
-
-                    System.out.print("Enter Order ID: ");
-                    int orderId = scanner.nextInt();
-                    scanner.nextLine();  // Consume the newline
-
-                    service.createOrder(orderId, productId);
-                    System.out.println("Order created for Product ID " + productId + " with Order ID " + orderId);
+                case 1: // Register Product
+                    System.out.print("Enter Product ID: ");
+                    int newProductId = scanner.nextInt(); // Changed variable name
+                    scanner.nextLine(); // Consume the newline
+                    System.out.print("Enter Product Type: ");
+                    String productType = scanner.nextLine();
+                    try {
+                        service.registerProduct(newProductId, productType);
+                        System.out.println("Product registered successfully.");
+                    } catch (RemoteException e) {
+                        System.out.println("Error registering product: " + e.getMessage());
+                    }
                     break;
 
                 case 2: // View Product Trays
-                    List<ProductTrays> productTrays = service.getAllProductTrays(); // Should match the interface
+                    List<ProductTrays> productTrays = service.getAllProductTrays();
                     System.out.println("Registered Product Trays:");
                     for (ProductTrays tray : productTrays) {
-                        System.out.println(tray); // Assuming each tray is a string representation
+                        System.out.println(tray); // Assuming each tray has a proper toString implementation
                     }
                     break;
 
                 case 3: // Get Product Details
                     System.out.print("Enter Product ID to view details: ");
                     int detailsProductId = scanner.nextInt();
-                    scanner.nextLine();  // Consume the newline
-
-                    // Fetch product details using the appropriate service method
-                    List<String> productDetails = service.getProductById(detailsProductId);
-                    System.out.println("Product Details for ID " + detailsProductId + ": " + productDetails);
+                    scanner.nextLine(); // Consume the newline
+                    try {
+                        List<String> productDetails = service.getProductById(detailsProductId);
+                        System.out.println("Product Details for ID " + detailsProductId + ": ");
+                        for (String detail : productDetails) {
+                            System.out.println(detail);
+                        }
+                    } catch (RemoteException e) {
+                        System.out.println("Error fetching product details: " + e.getMessage());
+                    }
                     break;
 
-                case 4: // Exit
+                case 4: // Assign Tray to Product
+                    System.out.print("Enter Tray ID: ");
+                    int trayId = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+                    System.out.print("Enter Product ID: ");
+                    int targetProductId = scanner.nextInt(); // Changed variable name
+                    scanner.nextLine(); // Consume newline
+                    try {
+                        service.assignTrayToProduct(trayId, targetProductId);
+                        System.out.println("Tray successfully assigned to product.");
+                    } catch (RemoteException e) {
+                        System.out.println("Error assigning tray to product: " + e.getMessage());
+                    }
+                    break;
+
+                case 5: // Exit
                     exit = true;
                     System.out.println("Exiting the client...");
                     break;
 
                 default:
-                    System.out.println("Invalid choice. Please select between 1 and 4.");
+                    System.out.println("Invalid choice. Please select between 1 and 5.");
                     break;
             }
         }
 
         scanner.close();
-
     }
 }

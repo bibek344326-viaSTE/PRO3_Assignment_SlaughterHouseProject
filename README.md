@@ -114,16 +114,6 @@ The service is defined in a `.proto` file located in the project. The **Proto fi
 - **BloomRPC/Postman**:
    - The **gRPC** and **RESTful** APIs have been tested using **BloomRPC** (for gRPC) and **Postman** (for RESTful). These tools ensure the APIs are working as expected.
 
-### Example Postman Tests:
-
-- **Animal Registration**:
-   - `POST /animals`: Add a new animal to the system.
-   - `GET /animals/{id}`: Retrieve an animal by its unique ID.
-
-- **gRPC Service**:
-   - `GetAnimalProducts`: Retrieve all products for a specific animal.
-   - `GetProductAnimals`: Retrieve all animals involved in a given product.
-
 ---
 
 ## Conclusion

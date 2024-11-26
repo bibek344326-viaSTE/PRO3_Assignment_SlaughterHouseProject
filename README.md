@@ -90,14 +90,48 @@ The service is defined in a `.proto` file located in the project. The **Proto fi
 
 ## How to Run the System
 
-### Prerequisites:
-- **PostgreSQL** Database running with the schema from the `db_script.sql` file.
-- **Maven** for building the Java project.
-- **Java** (JDK 8 or above).
+### Steps to Start the Services:
 
-### Steps:
-1. Clone the repository and navigate to the project directory.
-2. Execute the `db_script.sql` to set up the database.
-3. Compile the project with Maven:
-   ```bash
-   mvn clean install
+1. **Start the Animal Registration Service (RESTful)**:
+   - This service is responsible for registering animals that arrive at the slaughterhouse. It exposes the necessary RESTful endpoints for adding and retrieving animal data.
+
+2. **Start the Cutting and Part Registration Service (RMI)**:
+   - This service processes the animals into smaller parts and stores the parts in trays. It communicates via RMI for internal communication and registration.
+
+3. **Start the Product Registration Service (RMI)**:
+   - This service registers products that are packed with parts from the animals. It also communicates internally via RMI.
+
+4. **Run the gRPC Service** (for external queries):
+   - If you're using the gRPC service for external queries, start this service to expose the gRPC endpoints that can retrieve information about animals and products.
+
+---
+
+## Testing
+
+- **JUnit Tests**:
+   - Tests have been implemented for services like **animal registration** and **part registration**. The tests verify the functionality of the different services and ensure proper integration with the database.
+
+- **BloomRPC/Postman**:
+   - The **gRPC** and **RESTful** APIs have been tested using **BloomRPC** (for gRPC) and **Postman** (for RESTful). These tools ensure the APIs are working as expected.
+
+### Example Postman Tests:
+
+- **Animal Registration**:
+   - `POST /animals`: Add a new animal to the system.
+   - `GET /animals/{id}`: Retrieve an animal by its unique ID.
+
+- **gRPC Service**:
+   - `GetAnimalProducts`: Retrieve all products for a specific animal.
+   - `GetProductAnimals`: Retrieve all animals involved in a given product.
+
+---
+
+## Conclusion
+
+This system simulates the operation of a **slaughterhouse** and provides the necessary functionality for:
+- Animal registration
+- Part cutting
+- Product packaging
+- External product recall queries via gRPC
+
+The stations in the system are designed to work independently, ensuring that the system can continue operating even during temporary outages.
